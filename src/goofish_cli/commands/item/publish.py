@@ -36,11 +36,10 @@ def publish(
 ) -> dict[str, Any]:
     session = Session.load()
 
-    # 1. 上传图片（每张独立限流）
+    # 1. 上传图片（CDN 上传不占写令牌）
     image_infos: list[dict[str, Any]] = []
     for img_path in images:
-        with acquire("item.write"):
-            r = upload(img_path)
+        r = upload(img_path)
         image_infos.append({"url": r["url"], "width": r["width"], "height": r["height"]})
 
     # 2. AI 类目
